@@ -1,0 +1,163 @@
+:root {
+  --primary-sky: #0091ff;
+  --primary-sky-hover: #0077db;
+  --primary-sky-light: #e6f4ff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 35px 40px; /* Thu gọn padding trên dưới một chút vì form register nhiều ô hơn */
+  border-radius: 16px;
+  box-shadow: 0 10px 35px rgba(0, 145, 255, 0.08);
+  backdrop-filter: blur(10px);
+  box-sizing: border-box;
+  animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.register-logo-icon {
+  width: 42px;
+  height: 42px;
+  background-color: var(--primary-sky);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 145, 255, 0.25);
+}
+
+.register-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.register-header p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Khoảng cách vừa vặn giữa các form group */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: #9ca3af;
+  transition: color 0.2s ease;
+}
+
+.form-group .input-wrapper input {
+  width: 100%;
+  padding: 11px 14px 11px 44px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14.5px;
+  background-color: #fff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-group .input-wrapper input:focus {
+  border-color: var(--primary-sky);
+  box-shadow: 0 0 0 4px var(--primary-sky-light);
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--primary-sky);
+}
+
+.input-wrapper.input-error-border input {
+  border-color: #ef4444 !important;
+}
+
+.error-message-text {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.alert-danger-global {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.login-link {
+  color: var(--primary-sky);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  color: var(--primary-sky-hover);
+  text-decoration: underline;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-sky);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 145, 255, 0.2);
+}
+
+.register-btn:hover {
+  background-color: var(--primary-sky-hover);
+  box-shadow: 0 6px 16px rgba(0, 145, 255, 0.3);
+}
+
+.register-btn:active {
+  transform: scale(0.98);
+}
+
+.register-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}

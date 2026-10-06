@@ -1,0 +1,179 @@
+:root {
+  --primary-sky: #0091ff;
+  --primary-sky-hover: #0077db;
+  --primary-sky-light: #e6f4ff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+}
+
+/* Điều chỉnh lại Card Đăng nhập */
+.login-card {
+  width: 100%;
+  max-width: 420px; /* Thu nhỏ lại một chút cho vừa mắt */
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 145, 255, 0.08);
+  backdrop-filter: blur(10px);
+  box-sizing: border-box; /* Đảm bảo padding không làm phình card */
+  animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tăng khoảng cách giữa Form và nút bấm */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px; /* Tăng khoảng cách giữa các ô nhập liệu lên một chút */
+}
+
+/* Nút Đăng nhập */
+.login-btn {
+  width: 100%;
+  padding: 13px;
+  background-color: var(--primary-sky);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px; /* Tạo khoảng trống phía trên nút */
+  box-shadow: 0 4px 12px rgba(0, 145, 255, 0.2);
+}
+
+.login-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.login-header p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: #9ca3af;
+  transition: color 0.2s ease;
+}
+
+.form-group .input-wrapper input {
+  width: 100%;
+  padding: 12px 14px 12px 44px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #fff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-group .input-wrapper input:focus {
+  border-color: var(--primary-sky);
+  box-shadow: 0 0 0 4px var(--primary-sky-light);
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--primary-sky);
+}
+
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13.5px;
+}
+
+.input-wrapper.input-error-border input {
+  border-color: #ef4444 !important;
+}
+
+.error-message-text {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.alert-danger-global {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #4b5563;
+}
+
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-sky);
+  cursor: pointer;
+}
+
+.forgot-password-link, .signup-link {
+  color: var(--primary-sky);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover, .signup-link:hover {
+  color: var(--primary-sky-hover);
+  text-decoration: underline;
+}
+
+
+.login-btn:hover {
+  background-color: var(--primary-sky-hover);
+  box-shadow: 0 6px 16px rgba(0, 145, 255, 0.3);
+}
+
+.login-btn:active {
+  transform: scale(0.98);
+}
+
+/* Dòng chữ chuyển hướng đăng ký ở dưới cùng */
+.login-footer {
+  margin-top: 28px; /* Đẩy hẳn dòng chữ này tách biệt khỏi nút Sign In */
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}

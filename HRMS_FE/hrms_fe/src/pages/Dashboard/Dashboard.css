@@ -1,0 +1,121 @@
+.dashboard-welcome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.role-badge {
+  background: var(--brand);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+.role-badge.admin { background: #dc2626; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2); }
+.role-badge.hr { background: #059669; box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2); }
+.role-badge.manager { background: #d97706; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2); }
+.role-badge.payroll { background: #7c3aed; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2); }
+.role-badge.recruiter { background: #db2777; box-shadow: 0 4px 10px rgba(219, 39, 119, 0.2); }
+.role-badge.employee { background: #2563eb; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.dashboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dashboard-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.dashboard-list-item:last-child {
+  border-bottom: none;
+}
+
+.dashboard-list-item:hover {
+  background: var(--surface-soft);
+  transform: translateX(4px);
+}
+
+.activity-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--brand);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.activity-content {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.quick-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  border-radius: 14px;
+  font-weight: 550;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.quick-action-btn:hover {
+  border-color: var(--brand);
+  background: rgba(37, 99, 235, 0.04);
+  color: var(--brand);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.08);
+}
+
+.quick-action-btn svg {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.quick-action-btn:hover svg {
+  color: var(--brand);
+}
+
+@media (max-width: 900px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+}

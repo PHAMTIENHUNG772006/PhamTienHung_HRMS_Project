@@ -1,0 +1,32 @@
+.users-page {
+  width: 100%;
+}
+
+.users-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-btn:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.tab-btn:active {
+  transform: translateY(0);
+}
+
+.active-tab {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
