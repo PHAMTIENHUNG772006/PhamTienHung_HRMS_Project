@@ -1,0 +1,1173 @@
+{
+  "info": {
+    "_postman_id": "c1f7a28b-98e3-4923-a551-863a9926b421",
+    "name": "HRMS Backend API Collection",
+    "description": "Toàn bộ API của hệ thống HRMS Backend (Spring Boot 3.2.5, PostgreSQL, Redis, Cloudinary). Tích hợp test script tự động lưu JWT token khi đăng nhập.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "01. Authentication",
+      "item": [
+        {
+          "name": "Login (Đăng nhập)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var response = pm.response.json();",
+                  "    if (response.data && response.data.token) {",
+                  "        pm.collectionVariables.set(\"token\", response.data.token);",
+                  "        pm.collectionVariables.set(\"refreshToken\", response.data.refreshToken);",
+                  "        console.log(\"Saved token:\", response.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@company.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register (Đăng ký ứng viên)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nguyễn Văn A\",\n  \"email\": \"nguyenvana@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token (Làm mới token)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Change Password (Đổi mật khẩu)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"admin123\",\n  \"newPassword\": \"admin456\",\n  \"confirmPassword\": \"admin456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "change-password"]
+            }
+          }
+        },
+        {
+          "name": "Logout (Đăng xuất)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Account Management",
+      "item": [
+        {
+          "name": "Get All Accounts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts"]
+            }
+          }
+        },
+        {
+          "name": "Get Unassigned Accounts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts/unassigned",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts", "unassigned"]
+            }
+          }
+        },
+        {
+          "name": "Get Account By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Update Account",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin_updated@company.com\",\n  \"roleId\": 1,\n  \"status\": \"ACTIVE\",\n  \"bankAccountNumber\": \"190365789102\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Account Status",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts/1/toggle-status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts", "1", "toggle-status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/accounts/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "accounts", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Employee Management",
+      "item": [
+        {
+          "name": "Get All Employees",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "employees"]
+            }
+          }
+        },
+        {
+          "name": "Get Employee By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "employees", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Employee",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"fullName\": \"Trần Văn Bảo\",\n  \"idCardNumber\": 123456789012,\n  \"departmentId\": 1,\n  \"positionId\": 1,\n  \"joiningDate\": \"2026-01-15\",\n  \"status\": \"ACTIVE\",\n  \"bankAccountNumber\": \"9876543210\",\n  \"basicSalary\": 18000000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "employees"]
+            }
+          }
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"fullName\": \"Trần Văn Bảo (Leader)\",\n  \"idCardNumber\": 123456789012,\n  \"departmentId\": 1,\n  \"positionId\": 1,\n  \"joiningDate\": \"2026-01-15\",\n  \"status\": \"ACTIVE\",\n  \"bankAccountNumber\": \"9876543210\",\n  \"basicSalary\": 22000000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "employees", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/employees/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "employees", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Department Management",
+      "item": [
+        {
+          "name": "Get All Departments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/departments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "departments"]
+            }
+          }
+        },
+        {
+          "name": "Get Department By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/departments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "departments", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departmentCode\": \"TECH\",\n  \"departmentName\": \"Phòng Công Nghệ & Phần Mềm\",\n  \"description\": \"Chịu trách nhiệm nghiên cứu và phát triển sản phẩm\",\n  \"managerId\": null,\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/departments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "departments"]
+            }
+          }
+        },
+        {
+          "name": "Update Department",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"departmentCode\": \"TECH\",\n  \"departmentName\": \"Phòng Công Nghệ Thông Tin (Updated)\",\n  \"description\": \"Phụ trách kiến trúc hệ thống và an ninh mạng\",\n  \"managerId\": null,\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/departments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "departments", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Department",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/departments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "departments", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Position Management",
+      "item": [
+        {
+          "name": "Get All Positions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/positions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "positions"]
+            }
+          }
+        },
+        {
+          "name": "Get Position By ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/positions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "positions", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Position",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"positionName\": \"Kỹ sư Backend Cấp cao (Senior Java)\",\n  \"salaryGrade\": \"B3\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/positions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "positions"]
+            }
+          }
+        },
+        {
+          "name": "Update Position",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"positionName\": \"Chuyên gia Backend (Lead Developer)\",\n  \"salaryGrade\": \"B4\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/positions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "positions", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Position",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/positions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "positions", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Time & Attendance",
+      "item": [
+        {
+          "name": "Get My Attendance History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/my",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "my"]
+            }
+          }
+        },
+        {
+          "name": "Get All Attendances (Date Range)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/all?startDate=2026-10-01&endDate=2026-10-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "all"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2026-10-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-10-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Check-in (Chấm công vào)",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "shiftCode",
+                  "value": "CA_SANG",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/check-in",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "check-in"]
+            }
+          }
+        },
+        {
+          "name": "Check-out (Chấm công ra)",
+          "request": {
+            "method": "POST",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "shiftCode",
+                  "value": "CA_SANG",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/check-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "check-out"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Shift Management",
+      "item": [
+        {
+          "name": "Get All Shifts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shifts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shifts"]
+            }
+          }
+        },
+        {
+          "name": "Get Today Shifts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shifts/today",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shifts", "today"]
+            }
+          }
+        },
+        {
+          "name": "Create Shift",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shiftCode\": \"CA_HANH_CHINH\",\n  \"shiftName\": \"Ca Hành Chính (8h-17h)\",\n  \"shiftDate\": null,\n  \"startTime\": \"08:00:00\",\n  \"endTime\": \"17:00:00\",\n  \"breakDuration\": 60\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shifts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shifts"]
+            }
+          }
+        },
+        {
+          "name": "Update Shift",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shiftCode\": \"CA_HANH_CHINH\",\n  \"shiftName\": \"Ca Hành Chính Mùa Hè\",\n  \"shiftDate\": null,\n  \"startTime\": \"08:30:00\",\n  \"endTime\": \"17:30:00\",\n  \"breakDuration\": 60\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shifts/CA_HANH_CHINH",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shifts", "CA_HANH_CHINH"]
+            }
+          }
+        },
+        {
+          "name": "Delete Shift",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shifts/CA_HANH_CHINH",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shifts", "CA_HANH_CHINH"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Shift Assignment",
+      "item": [
+        {
+          "name": "Get Shift Assignments (Date Range)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shift-assignments?startDate=2026-10-01&endDate=2026-10-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shift-assignments"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2026-10-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-10-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Assign Shifts to Employees",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeIds\": [1],\n  \"shiftCode\": \"CA_HANH_CHINH\",\n  \"fromDate\": \"2026-10-01\",\n  \"toDate\": \"2026-10-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shift-assignments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shift-assignments"]
+            }
+          }
+        },
+        {
+          "name": "Get My Shift Assignments Today",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shift-assignments/my-today",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shift-assignments", "my-today"]
+            }
+          }
+        },
+        {
+          "name": "Delete Shift Assignment",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shift-assignments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "shift-assignments", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "09. Leave Request Management",
+      "item": [
+        {
+          "name": "Get All Leave Requests",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/leave-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "leave-requests"]
+            }
+          }
+        },
+        {
+          "name": "Create Leave Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"leaveType\": \"ANNUAL\",\n  \"startDate\": \"2026-10-15\",\n  \"endDate\": \"2026-10-16\",\n  \"totalDays\": 2.0,\n  \"status\": \"PENDING\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/leave-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "leave-requests"]
+            }
+          }
+        },
+        {
+          "name": "Update Leave Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"leaveType\": \"ANNUAL\",\n  \"startDate\": \"2026-10-15\",\n  \"endDate\": \"2026-10-17\",\n  \"totalDays\": 3.0,\n  \"status\": \"PENDING\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/leave-requests/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "leave-requests", "1"]
+            }
+          }
+        },
+        {
+          "name": "Approve / Reject Leave Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/leave-requests/1/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "leave-requests", "1", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete Leave Request",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/leave-requests/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "leave-requests", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Overtime Management",
+      "item": [
+        {
+          "name": "Get All OT Requests",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/overtime-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "overtime-requests"]
+            }
+          }
+        },
+        {
+          "name": "Create OT Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"otDate\": \"2026-10-18\",\n  \"startTime\": \"18:00:00\",\n  \"endTime\": \"21:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/overtime-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "overtime-requests"]
+            }
+          }
+        },
+        {
+          "name": "Update OT Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": 1,\n  \"otDate\": \"2026-10-18\",\n  \"startTime\": \"18:30:00\",\n  \"endTime\": \"21:30:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/overtime-requests/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "overtime-requests", "1"]
+            }
+          }
+        },
+        {
+          "name": "Approve OT Request",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\",\n  \"approvedHours\": 3.0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/overtime-requests/1/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "overtime-requests", "1", "status"]
+            }
+          }
+        },
+        {
+          "name": "Delete OT Request",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/overtime-requests/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "overtime-requests", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Payroll Management",
+      "item": [
+        {
+          "name": "Get All Payrolls",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payroll",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payroll"]
+            }
+          }
+        },
+        {
+          "name": "Calculate Payroll for Period",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"period\": \"2026-10\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payroll/calculate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payroll", "calculate"]
+            }
+          }
+        },
+        {
+          "name": "Update Payroll Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PAID\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/payroll/1/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "payroll", "1", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Recruitment Campaigns",
+      "item": [
+        {
+          "name": "Get All Campaigns",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recruitment",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "recruitment"]
+            }
+          }
+        },
+        {
+          "name": "Create Recruitment Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"positionId\": 1,\n  \"quantityNeeded\": 5,\n  \"deadline\": \"2026-11-30\",\n  \"description\": \"Tuyển dụng kỹ sư công nghệ phần mềm backend Spring Boot & Cloud\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recruitment",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "recruitment"]
+            }
+          }
+        },
+        {
+          "name": "Update Recruitment Campaign",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"positionId\": 1,\n  \"quantityNeeded\": 8,\n  \"deadline\": \"2026-12-15\",\n  \"description\": \"Mở rộng đợt tuyển dụng backend developer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recruitment/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "recruitment", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Recruitment Campaign",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recruitment/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "recruitment", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Candidate Management",
+      "item": [
+        {
+          "name": "Get All Candidates",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/candidates",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "candidates"]
+            }
+          }
+        },
+        {
+          "name": "Create Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaignId\": 1,\n  \"candidateName\": \"Lê Hoàng Nam\",\n  \"email\": \"lehoangnam@example.com\",\n  \"cvFileUrl\": \"https://res.cloudinary.com/demo/image/upload/sample_cv.pdf\",\n  \"source\": \"LinkedIn\",\n  \"status\": \"APPLIED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/candidates",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "candidates"]
+            }
+          }
+        },
+        {
+          "name": "Approve Candidate (Onboard to Employee)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeCode\": \"EMP008\",\n  \"departmentId\": 1,\n  \"positionId\": 1,\n  \"roleName\": \"EMPLOYEE\",\n  \"status\": \"ACTIVE\",\n  \"idCardNumber\": 123456789099\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/candidates/1/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "candidates", "1", "approve"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Asset Management",
+      "item": [
+        {
+          "name": "Get All Assets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assets"]
+            }
+          }
+        },
+        {
+          "name": "Create Asset",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetName\": \"Màn hình Dell UltraSharp U2723QE\",\n  \"assetType\": \"MONITOR\",\n  \"status\": \"AVAILABLE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assets"]
+            }
+          }
+        },
+        {
+          "name": "Update Asset",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetName\": \"Màn hình Dell UltraSharp U2723QE\",\n  \"assetType\": \"MONITOR\",\n  \"status\": \"ASSIGNED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assets", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Asset",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/assets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "assets", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "15. Dashboard & Analytics",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "dashboard", "stats"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
