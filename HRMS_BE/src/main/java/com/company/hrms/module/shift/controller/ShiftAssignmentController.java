@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/shift-assignments")
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class ShiftAssignmentController {
     private final ShiftAssignmentService shiftAssignmentService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<List<ShiftAssignmentResponseDto>>> getShiftAssignments(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -36,6 +39,7 @@ public class ShiftAssignmentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> createShiftAssignments(@Valid @RequestBody ShiftAssignmentRequestDto request) {
         shiftAssignmentService.createShiftAssignments(request);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
@@ -45,6 +49,7 @@ public class ShiftAssignmentController {
     }
 
     @GetMapping("/my-today")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<List<ShiftAssignmentResponseDto>>> getMyShiftAssignmentsToday() {
         return ResponseEntity.ok(ApiResponse.<List<ShiftAssignmentResponseDto>>builder()
                 .success(true)
@@ -54,6 +59,7 @@ public class ShiftAssignmentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> deleteShiftAssignment(@PathVariable Long id) {
         shiftAssignmentService.deleteShiftAssignment(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

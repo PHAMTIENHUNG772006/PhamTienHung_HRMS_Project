@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/overtime-requests")
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class OvertimeRequestController {
     private final OvertimeRequestService overtimeService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<List<OvertimeResponseDto>>> getAllOvertimeRequests() {
         return ResponseEntity.ok(ApiResponse.<List<OvertimeResponseDto>>builder()
                 .success(true)
@@ -29,6 +32,7 @@ public class OvertimeRequestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<OvertimeResponseDto>> createOvertimeRequest(@Valid @RequestBody OvertimeRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<OvertimeResponseDto>builder()
                 .success(true)
@@ -38,6 +42,7 @@ public class OvertimeRequestController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<OvertimeResponseDto>> updateStatus(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
         String status = (String) payload.get("status");
         Float approvedHours = payload.get("approvedHours") != null ? ((Number) payload.get("approvedHours")).floatValue() : null;
@@ -49,6 +54,7 @@ public class OvertimeRequestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<OvertimeResponseDto>> updateOvertimeRequest(@PathVariable Long id, @Valid @RequestBody OvertimeRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<OvertimeResponseDto>builder()
                 .success(true)
@@ -58,6 +64,7 @@ public class OvertimeRequestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<Void>> deleteOvertimeRequest(@PathVariable Long id) {
         overtimeService.deleteOvertimeRequest(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

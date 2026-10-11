@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/candidates")
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class CandidateController {
     private final CandidateService candidateService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<List<CandidateResponseDto>>> getAllCandidates() {
         return ResponseEntity.ok(ApiResponse.<List<CandidateResponseDto>>builder()
                 .success(true)
@@ -29,6 +32,7 @@ public class CandidateController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'CANDIDATE')")
     public ResponseEntity<ApiResponse<CandidateResponseDto>> createCandidate(@Valid @RequestBody CandidateRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<CandidateResponseDto>builder()
                 .success(true)
@@ -38,6 +42,7 @@ public class CandidateController {
     }
 
     @PostMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<CandidateResponseDto>> approveCandidate(@PathVariable Long id, @Valid @RequestBody CandidateApproveDto request) {
         return ResponseEntity.ok(ApiResponse.<CandidateResponseDto>builder()
                 .success(true)

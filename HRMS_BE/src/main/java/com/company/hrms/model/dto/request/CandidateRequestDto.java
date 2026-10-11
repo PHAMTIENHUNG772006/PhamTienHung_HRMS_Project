@@ -12,6 +12,8 @@ public class CandidateRequestDto {
     @NotNull(message = "ID chiến dịch không được để trống")
     private Long campaignId;
 
+    @jakarta.validation.constraints.Email(message = "Định dạng email ứng viên không hợp lệ")
+    @NotBlank(message = "Email ứng viên không được để trống")
     private String email;
 
     @NotBlank(message = "Link CV không được để trống")

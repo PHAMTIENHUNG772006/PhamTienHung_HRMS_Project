@@ -23,6 +23,7 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<List<AttendanceResponseDto>>> getMyAttendances(Authentication authentication) {
         return ResponseEntity.ok(ApiResponse.<List<AttendanceResponseDto>>builder()
                 .success(true)
@@ -44,6 +45,7 @@ public class AttendanceController {
     }
 
     @PostMapping(value = "/check-in", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<AttendanceResponseDto>> checkIn(
             Authentication authentication,
             @RequestParam(value = "image", required = false) MultipartFile image,
@@ -57,6 +59,7 @@ public class AttendanceController {
     }
 
     @PostMapping(value = "/check-out", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<AttendanceResponseDto>> checkOut(
             Authentication authentication,
             @RequestParam(value = "image", required = false) MultipartFile image,

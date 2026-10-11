@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/positions")
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class PositionController {
     private final PositionService positionService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE', 'MANAGER')")
     public ResponseEntity<ApiResponse<List<PositionResponse>>> getAllPositions() {
         return ResponseEntity.ok(ApiResponse.<List<PositionResponse>>builder()
                 .success(true)
@@ -28,6 +31,7 @@ public class PositionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE', 'MANAGER')")
     public ResponseEntity<ApiResponse<PositionResponse>> getPositionById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.<PositionResponse>builder()
                 .success(true)
@@ -37,6 +41,7 @@ public class PositionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<PositionResponse>> createPosition(@Valid @RequestBody PositionRequest request) {
         return ResponseEntity.ok(ApiResponse.<PositionResponse>builder()
                 .success(true)
@@ -46,6 +51,7 @@ public class PositionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<PositionResponse>> updatePosition(@PathVariable Long id, @Valid @RequestBody PositionRequest request) {
         return ResponseEntity.ok(ApiResponse.<PositionResponse>builder()
                 .success(true)
@@ -55,6 +61,7 @@ public class PositionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<Void>> deletePosition(@PathVariable Long id) {
         positionService.deletePosition(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

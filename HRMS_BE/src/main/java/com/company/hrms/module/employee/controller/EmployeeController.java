@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/employees")
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<List<EmployeeResponse>>> getAllEmployees() {
         return ResponseEntity.ok(ApiResponse.<List<EmployeeResponse>>builder()
                 .success(true)
@@ -28,6 +31,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<EmployeeResponse>> getEmployeeById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.<EmployeeResponse>builder()
                 .success(true)
@@ -37,6 +41,7 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(@Valid @RequestBody EmployeeRequest request) {
         return ResponseEntity.ok(ApiResponse.<EmployeeResponse>builder()
                 .success(true)
@@ -46,6 +51,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeRequest request) {
         return ResponseEntity.ok(ApiResponse.<EmployeeResponse>builder()
                 .success(true)
@@ -55,6 +61,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<Void>> deleteEmployee(@PathVariable Long id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

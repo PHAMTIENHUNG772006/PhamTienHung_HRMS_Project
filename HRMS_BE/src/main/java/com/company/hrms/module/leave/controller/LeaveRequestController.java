@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/leave-requests")
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class LeaveRequestController {
     private final LeaveRequestService leaveRequestService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<List<LeaveResponseDto>>> getAllLeaveRequests() {
         return ResponseEntity.ok(ApiResponse.<List<LeaveResponseDto>>builder()
                 .success(true)
@@ -29,6 +32,7 @@ public class LeaveRequestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<LeaveResponseDto>> createLeaveRequest(@Valid @RequestBody LeaveRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<LeaveResponseDto>builder()
                 .success(true)
@@ -38,6 +42,7 @@ public class LeaveRequestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<LeaveResponseDto>> updateLeaveRequest(@PathVariable Long id, @Valid @RequestBody LeaveRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<LeaveResponseDto>builder()
                 .success(true)
@@ -47,6 +52,7 @@ public class LeaveRequestController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<LeaveResponseDto>> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         String status = payload.get("status");
         return ResponseEntity.ok(ApiResponse.<LeaveResponseDto>builder()
@@ -57,6 +63,7 @@ public class LeaveRequestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<Void>> deleteLeaveRequest(@PathVariable Long id) {
         leaveRequestService.deleteLeaveRequest(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

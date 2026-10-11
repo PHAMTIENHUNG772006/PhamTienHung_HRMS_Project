@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/recruitment")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'HR')")
 public class RecruitmentController {
 
     private final RecruitmentService recruitmentService;

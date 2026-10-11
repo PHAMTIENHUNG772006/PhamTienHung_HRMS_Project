@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/shifts")
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class ShiftController {
     private final ShiftService shiftService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<List<ShiftResponseDto>>> getAllShifts() {
         return ResponseEntity.ok(ApiResponse.<List<ShiftResponseDto>>builder()
                 .success(true)
@@ -28,6 +31,7 @@ public class ShiftController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<ShiftResponseDto>> createShift(@Valid @RequestBody ShiftRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<ShiftResponseDto>builder()
                 .success(true)
@@ -37,6 +41,7 @@ public class ShiftController {
     }
 
     @PutMapping("/{code}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<ShiftResponseDto>> updateShift(@PathVariable String code, @Valid @RequestBody ShiftRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<ShiftResponseDto>builder()
                 .success(true)
@@ -46,6 +51,7 @@ public class ShiftController {
     }
 
     @DeleteMapping("/{code}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> deleteShift(@PathVariable String code) {
         shiftService.deleteShift(code);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
@@ -55,6 +61,7 @@ public class ShiftController {
     }
 
     @GetMapping("/today")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
     public ResponseEntity<ApiResponse<List<ShiftResponseDto>>> getTodayShifts() {
         return ResponseEntity.ok(ApiResponse.<List<ShiftResponseDto>>builder()
                 .success(true)

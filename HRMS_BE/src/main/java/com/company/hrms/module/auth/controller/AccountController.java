@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/accounts")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class AccountController {
 
     private final AccountService accountService;

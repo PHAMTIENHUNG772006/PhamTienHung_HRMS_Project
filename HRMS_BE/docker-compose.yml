@@ -1,0 +1,71 @@
+﻿services:
+  hrms-postgres:
+    image: postgres:16-alpine
+    container_name: hrms-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: hrms_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      # Port 5433 trên máy host để tránh trùng với các container Postgres khác đang chạy port 5432
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - hrms_postgres_data:/var/lib/postgresql/data
+    networks:
+      - hrms-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hrms_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  hrms-redis:
+    image: redis:7-alpine
+    container_name: hrms-redis
+    restart: always
+    ports:
+      # Port 6380 trên máy host để tránh trùng với container Redis khác đang chạy port 6379
+      - "${REDIS_PORT:-6380}:6379"
+    volumes:
+      - hrms_redis_data:/data
+    networks:
+      - hrms-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  hrms-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hrms-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://hrms-postgres:5432/hrms_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATA_REDIS_HOST=hrms-redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - PORT=8080
+    depends_on:
+      hrms-postgres:
+        condition: service_healthy
+      hrms-redis:
+        condition: service_healthy
+    networks:
+      - hrms-net
+
+networks:
+  hrms-net:
+    driver: bridge
+
+volumes:
+  hrms_postgres_data:
+    driver: local
+  hrms_redis_data:
+    driver: local

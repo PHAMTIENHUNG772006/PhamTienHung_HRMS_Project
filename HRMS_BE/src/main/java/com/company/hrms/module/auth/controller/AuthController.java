@@ -13,6 +13,7 @@ import com.company.hrms.model.entity.User;
 import com.company.hrms.module.auth.service.AuthService;
 import com.company.hrms.security.jwt.JwtProvider;
 import com.company.hrms.security.jwt.RefreshTokenService;
+import com.company.hrms.security.jwt.TokenBlacklistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,8 @@ public class AuthController {
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
     private final JwtProvider jwtProvider;
+    private final TokenBlacklistService tokenBlacklistService;
+    private final com.company.hrms.module.auth.repository.UserRepository userRepository;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
@@ -60,25 +63,33 @@ public class AuthController {
     public ResponseEntity<ApiResponse<TokenRefreshResponse>> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String token = jwtProvider.generateToken(user);
-                    return ResponseEntity.ok(ApiResponse.<TokenRefreshResponse>builder()
-                            .success(true)
-                            .message("Token refreshed successfully")
-                            .data(TokenRefreshResponse.builder()
-                                    .accessToken(token)
-                                    .refreshToken(requestRefreshToken)
-                                    .userId(user.getUserId())
-                                    .username(user.getActualUsername())
-                                    .email(user.getEmail())
-                                    .role(user.getRole().getRoleName())
-                                    .build())
-                            .build());
-                })
-                .orElseThrow(() -> new AppException("Refresh token is not in database!", HttpStatus.FORBIDDEN));
+        // Tìm token cũ
+        RefreshToken oldRefreshToken = refreshTokenService.findByToken(requestRefreshToken)
+                .orElseThrow(() -> new AppException("Refresh token không tồn tại trong hệ thống!", HttpStatus.FORBIDDEN));
+
+        // Kiểm tra hết hạn
+        refreshTokenService.verifyExpiration(oldRefreshToken);
+
+        User user = oldRefreshToken.getUser();
+
+        // Thực hiện Refresh Token Rotation: Hủy token cũ và cấp token mới
+        RefreshToken newRefreshToken = refreshTokenService.rotateRefreshToken(oldRefreshToken);
+
+        // Sinh mới Access Token
+        String newAccessToken = jwtProvider.generateToken(user);
+
+        return ResponseEntity.ok(ApiResponse.<TokenRefreshResponse>builder()
+                .success(true)
+                .message("Làm mới token thành công")
+                .data(TokenRefreshResponse.builder()
+                        .accessToken(newAccessToken)
+                        .refreshToken(newRefreshToken.getToken())
+                        .userId(user.getUserId())
+                        .username(user.getActualUsername())
+                        .email(user.getEmail())
+                        .role(user.getRole().getRoleName())
+                        .build())
+                .build());
     }
 
     @PostMapping("/change-password")
@@ -107,17 +118,29 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(Authentication authentication) {
+    public ResponseEntity<ApiResponse<Void>> logout(jakarta.servlet.http.HttpServletRequest request, Authentication authentication) {
+        // 1. Blacklist Access Token hiện tại trong Redis
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String jwt = authHeader.substring(7);
+            long remainingMs = jwtProvider.getRemainingExpirationMs(jwt);
+            if (remainingMs > 0) {
+                tokenBlacklistService.blacklistToken(jwt, remainingMs);
+            }
+        }
+
+        // 2. Thu hồi Refresh Token trong DB và Redis
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof User) {
                 User user = (User) principal;
                 refreshTokenService.deleteByUserId(user.getUserId());
             } else if (principal instanceof UserDetails) {
-                 // Nếu principal bị bọc bởi UserDetails của Spring thì lấy email query ra id
-                 // Tùy theo cách implement, ở đây ta giả sử nó là User
+                String email = ((UserDetails) principal).getUsername();
+                userRepository.findByEmail(email).ifPresent(u -> refreshTokenService.deleteByUserId(u.getUserId()));
             }
         }
+
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .success(true)
                 .message("Đăng xuất thành công")

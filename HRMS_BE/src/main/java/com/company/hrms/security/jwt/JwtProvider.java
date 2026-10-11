@@ -52,12 +52,26 @@ public class JwtProvider {
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    public boolean isTokenExpired(String token) {
+        try {
+            return extractExpiration(token).before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
     }
 
-    private Date extractExpiration(String token) {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public long getRemainingExpirationMs(String token) {
+        try {
+            Date expiration = extractExpiration(token);
+            long diff = expiration.getTime() - System.currentTimeMillis();
+            return Math.max(diff, 0);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private Claims extractAllClaims(String token) {

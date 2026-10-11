@@ -25,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository; // Added to fetch the actual User entity
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(
@@ -42,7 +43,20 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7);
-        userEmail = jwtProvider.extractUsername(jwt);
+
+        // Kiểm tra xem token có nằm trong Redis Blacklist (đã logout hoặc bị thu hồi) không
+        if (tokenBlacklistService.isBlacklisted(jwt)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        try {
+            userEmail = jwtProvider.extractUsername(jwt);
+        } catch (Exception e) {
+            // Token không hợp lệ hoặc hết hạn
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

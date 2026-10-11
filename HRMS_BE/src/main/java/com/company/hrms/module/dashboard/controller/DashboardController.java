@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/dashboard")
+@PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'PAYROLL')")
 public class DashboardController {
 
     @GetMapping("/stats")

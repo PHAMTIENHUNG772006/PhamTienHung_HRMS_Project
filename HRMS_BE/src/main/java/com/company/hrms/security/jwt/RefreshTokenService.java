@@ -112,6 +112,28 @@ public class RefreshTokenService {
         return token;
     }
 
+    /**
+     * Refresh Token Rotation:
+     * Hủy bỏ token cũ và sinh một cặp Refresh Token mới cho người dùng.
+     */
+    @Transactional
+    public RefreshToken rotateRefreshToken(RefreshToken oldToken) {
+        verifyExpiration(oldToken);
+        User user = oldToken.getUser();
+
+        // Xóa token cũ khỏi Redis và DB
+        try {
+            redisTemplate.delete(getRedisKey(oldToken.getToken()));
+        } catch (Exception e) {
+            // Ignore Redis delete failure
+        }
+        refreshTokenRepository.delete(oldToken);
+        refreshTokenRepository.flush();
+
+        // Tạo Refresh Token mới hoàn toàn
+        return createRefreshToken(user.getUserId());
+    }
+
     @Transactional
     public void deleteByUserId(Long userId) {
         User user = userRepository.findById(userId).orElse(null);

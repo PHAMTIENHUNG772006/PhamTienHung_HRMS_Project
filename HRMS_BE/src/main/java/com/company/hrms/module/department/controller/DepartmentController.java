@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/departments")
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE', 'MANAGER')")
     public ResponseEntity<ApiResponse<List<DepartmentResponse>>> getAllDepartments() {
         return ResponseEntity.ok(ApiResponse.<List<DepartmentResponse>>builder()
                 .success(true)
@@ -28,6 +31,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE', 'MANAGER')")
     public ResponseEntity<ApiResponse<DepartmentResponse>> getDepartmentById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.<DepartmentResponse>builder()
                 .success(true)
@@ -37,6 +41,7 @@ public class DepartmentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<DepartmentResponse>> createDepartment(@Valid @RequestBody DepartmentRequest request) {
         return ResponseEntity.ok(ApiResponse.<DepartmentResponse>builder()
                 .success(true)
@@ -46,6 +51,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<DepartmentResponse>> updateDepartment(@PathVariable Long id, @Valid @RequestBody DepartmentRequest request) {
         return ResponseEntity.ok(ApiResponse.<DepartmentResponse>builder()
                 .success(true)
@@ -55,6 +61,7 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<ApiResponse<Void>> deleteDepartment(@PathVariable Long id) {
         departmentService.deleteDepartment(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
