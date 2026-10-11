@@ -60,7 +60,7 @@ const UsersPage: React.FC = () => {
       if (res.success) {
         Swal.fire({
           title: 'Thành công!',
-          text: 'Thay đổi trạng thái tài khoản thành công!',
+          text: res.message || 'Thay đổi trạng thái tài khoản thành công!',
           icon: 'success',
           confirmButtonColor: 'var(--brand)',
           timer: 1500,
@@ -79,8 +79,9 @@ const UsersPage: React.FC = () => {
       } else {
         Swal.fire('Thất bại', res.message || 'Không thể thay đổi trạng thái tài khoản', 'error');
       }
-    } catch (e) {
-      Swal.fire('Lỗi', 'Đã xảy ra lỗi khi thay đổi trạng thái tài khoản', 'error');
+    } catch (e: any) {
+      const serverMsg = e.response?.data?.message || e.message || 'Đã xảy ra lỗi khi thay đổi trạng thái tài khoản';
+      Swal.fire('Thất bại', serverMsg, 'error');
     }
   };
 

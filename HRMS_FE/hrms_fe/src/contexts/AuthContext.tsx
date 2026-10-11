@@ -27,22 +27,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const storedRefreshToken = localStorage.getItem("refreshToken");
-        if (!storedRefreshToken) {
-          setInMemoryToken(null);
-          setToken(null);
-          setUser(null);
-          setLoading(false);
-          return;
-        }
-        const refreshData = await silentRefresh(storedRefreshToken);
-        if (refreshData.success && refreshData.data) {
-          const { accessToken, username, email, role, userId, refreshToken: newRefreshToken } = refreshData.data as any;
+        // Gọi silent refresh gửi kèm HttpOnly Cookie tự động
+        const refreshData = await silentRefresh();
+        if (refreshData && refreshData.success && refreshData.data) {
+          const { accessToken, username, email, role, userId } = refreshData.data as any;
           setInMemoryToken(accessToken);
           setToken(accessToken);
-          if (newRefreshToken) {
-            localStorage.setItem("refreshToken", newRefreshToken);
-          }
           setUser({
             id: userId,
             email,
@@ -56,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(null);
         }
       } catch (e) {
-        // Failed to silent refresh, meaning cookie is missing or invalid. Logged out state.
+        // Chưa đăng nhập hoặc cookie hết hạn: chuyển về trạng thái khách an toàn
         setInMemoryToken(null);
         setToken(null);
         setUser(null);
@@ -74,12 +64,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     _refreshToken?: string,
     _rememberMe = false
   ) => {
+    // Lưu Access Token trong RAM (Memory State) - Refresh Token được lưu trong HttpOnly Cookie bởi Server
     setInMemoryToken(accessToken);
     setToken(accessToken);
     setUser(userData);
-    if (_refreshToken) {
-      localStorage.setItem("refreshToken", _refreshToken);
-    }
   };
 
   const logout = () => {

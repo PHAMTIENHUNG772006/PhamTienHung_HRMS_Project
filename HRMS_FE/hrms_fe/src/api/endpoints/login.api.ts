@@ -39,7 +39,12 @@ export interface RefreshTokenResponse {
   };
 }
 
-export const silentRefresh = async (refreshToken: string) => {
-  const response = await axiosInstance.post<RefreshTokenResponse>('v1/auth/refresh-token', { refreshToken });
+export const silentRefresh = async (refreshToken?: string) => {
+  const response = await axiosInstance.post<RefreshTokenResponse>(
+    'v1/auth/refresh-token',
+    refreshToken ? { refreshToken } : {},
+    { withCredentials: true }
+  );
   return response.data;
 };
+

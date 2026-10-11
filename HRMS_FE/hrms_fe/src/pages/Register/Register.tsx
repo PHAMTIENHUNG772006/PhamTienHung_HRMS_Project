@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { registerUser } from "../../api/endpoints/auth.api";
 import "./Register.css";
 
@@ -12,7 +13,7 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // 2. BỔ SUNG: Khai báo state quản lý lỗi validate và trạng thái loading
+  // 2. State quản lý lỗi validate và trạng thái loading
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
@@ -53,8 +54,29 @@ const Register: React.FC = () => {
     e.preventDefault();
     setErrors({}); // Reset lỗi cũ
 
+    if (!fullName.trim()) {
+      setErrors({ fullName: "Vui lòng nhập họ và tên!" });
+      return;
+    }
+
+    if (!email.trim()) {
+      setErrors({ email: "Vui lòng nhập email!" });
+      return;
+    }
+
+    if (!password) {
+      setErrors({ password: "Vui lòng nhập mật khẩu!" });
+      return;
+    }
+
     if (password !== confirmPassword) {
-      setErrors({ confirmPassword: "Passwords do not match!" });
+      setErrors({ confirmPassword: "Mật khẩu xác nhận không khớp!" });
+      Swal.fire({
+        title: "Lỗi xác thực",
+        text: "Mật khẩu xác nhận không khớp!",
+        icon: "warning",
+        confirmButtonColor: "var(--brand, #3b82f6)",
+      });
       return;
     }
 
@@ -68,18 +90,44 @@ const Register: React.FC = () => {
       });
 
       if (apiResponse.success) {
-        alert(apiResponse.message || "Đăng ký tài khoản ứng viên thành công! Vui lòng đăng nhập để theo dõi lịch trình phỏng vấn.");
+        await Swal.fire({
+          title: "Đăng ký thành công!",
+          text: apiResponse.message || "Đăng ký tài khoản ứng viên thành công! Vui lòng đăng nhập để tiếp tục.",
+          icon: "success",
+          confirmButtonColor: "var(--brand, #3b82f6)",
+        });
         navigate("/login");
       } else {
-        setErrors(extractServerErrors(apiResponse));
+        const serverErrors = extractServerErrors(apiResponse);
+        setErrors(serverErrors);
+        Swal.fire({
+          title: "Đăng ký thất bại",
+          text: apiResponse.message || "Đã xảy ra lỗi trong quá trình đăng ký.",
+          icon: "error",
+          confirmButtonColor: "var(--brand, #3b82f6)",
+        });
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
         const apiResponse = error.response.data;
-        setErrors(extractServerErrors(apiResponse));
+        const serverErrors = extractServerErrors(apiResponse);
+        setErrors(serverErrors);
+        Swal.fire({
+          title: "Đăng ký thất bại",
+          text: apiResponse.message || "Đã xảy ra lỗi trong quá trình đăng ký.",
+          icon: "error",
+          confirmButtonColor: "var(--brand, #3b82f6)",
+        });
       } else {
+        const globalMsg = "Không thể kết nối đến máy chủ. Vui lòng thử lại sau.";
         setErrors({
-          global: "Cannot connect to server. Please try again later.",
+          global: globalMsg,
+        });
+        Swal.fire({
+          title: "Lỗi kết nối",
+          text: globalMsg,
+          icon: "error",
+          confirmButtonColor: "var(--brand, #3b82f6)",
         });
       }
     } finally {
@@ -105,8 +153,8 @@ const Register: React.FC = () => {
             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
           </svg>
         </div>
-        <h2>Candidate Registration</h2>
-        <p>Create an account to apply for jobs and track your application status</p>
+        <h2>Đăng ký tài khoản</h2>
+        <p>Tạo tài khoản ứng viên để tham gia ứng tuyển và theo dõi kết quả</p>
       </div>
 
       {/* Hiển thị thông báo lỗi global (nếu có) */}
@@ -117,8 +165,7 @@ const Register: React.FC = () => {
       <form className="register-form" onSubmit={handleSubmit} noValidate>
         {/* Full Name Input */}
         <div className="form-group">
-          <label htmlFor="fullName">Full Name</label>
-          {/* Tích hợp đổi viền đỏ khi có lỗi bằng cách thêm class input-error-border */}
+          <label htmlFor="fullName">Họ và tên</label>
           <div
             className={`input-wrapper ${errors.fullName ? "input-error-border" : ""}`}
           >
@@ -139,12 +186,11 @@ const Register: React.FC = () => {
             <input
               type="text"
               id="fullName"
-              placeholder="Enter your full name"
+              placeholder="Nhập họ và tên đầy đủ"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
             />
           </div>
-          {/* Render dòng thông báo lỗi ngay dưới input */}
           {errors.fullName && (
             <span className="error-message-text">{errors.fullName}</span>
           )}
@@ -152,7 +198,7 @@ const Register: React.FC = () => {
 
         {/* Email Input */}
         <div className="form-group">
-          <label htmlFor="email">Email Address</label>
+          <label htmlFor="email">Địa chỉ Email</label>
           <div
             className={`input-wrapper ${errors.email ? "input-error-border" : ""}`}
           >
@@ -173,7 +219,7 @@ const Register: React.FC = () => {
             <input
               type="email"
               id="email"
-              placeholder="Enter your email"
+              placeholder="Nhập địa chỉ email của bạn"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -185,7 +231,7 @@ const Register: React.FC = () => {
 
         {/* Password Input */}
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">Mật khẩu</label>
           <div
             className={`input-wrapper ${errors.password ? "input-error-border" : ""}`}
           >
@@ -206,7 +252,7 @@ const Register: React.FC = () => {
             <input
               type="password"
               id="password"
-              placeholder="Minimum 6 characters"
+              placeholder="Tối thiểu 6 ký tự"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -218,7 +264,7 @@ const Register: React.FC = () => {
 
         {/* Confirm Password Input */}
         <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm Password</label>
+          <label htmlFor="confirmPassword">Xác nhận mật khẩu</label>
           <div
             className={`input-wrapper ${errors.confirmPassword ? "input-error-border" : ""}`}
           >
@@ -239,7 +285,7 @@ const Register: React.FC = () => {
             <input
               type="password"
               id="confirmPassword"
-              placeholder="Re-enter your password"
+              placeholder="Nhập lại mật khẩu"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
@@ -251,16 +297,16 @@ const Register: React.FC = () => {
 
         {/* Submit Button - Disable khi đang gọi API */}
         <button type="submit" className="register-btn" disabled={loading}>
-          {loading ? "Processing..." : "Sign Up"}
+          {loading ? "Đang xử lý..." : "Đăng ký tài khoản"}
         </button>
       </form>
 
       {/* Footer Link */}
       <div className="register-footer">
         <p>
-          Already have an account?{" "}
+          Đã có tài khoản?{" "}
           <Link to="/login" className="login-link">
-            Sign in here
+            Đăng nhập ngay
           </Link>
         </p>
       </div>

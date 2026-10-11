@@ -2,10 +2,11 @@ import axios from 'axios';
 import { logout } from '../utils/cookies';
 import { getInMemoryToken, setInMemoryToken } from './tokenStorage';
 
-const baseURL = import.meta.env.VITE_API_URL || 'https://hrms-backend-hkr2.onrender.com/api/';
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/';
 
 const axiosInstance = axios.create({
   baseURL,
+  timeout: 10000,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -74,20 +75,15 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const storedRefreshToken = localStorage.getItem("refreshToken");
         const refreshResp = await axios.post(
           `${baseURL}v1/auth/refresh-token`,
-          { refreshToken: storedRefreshToken },
+          {},
           { withCredentials: true }
         );
         
         const newAccessToken = refreshResp.data?.data?.accessToken;
-        const newRefreshToken = refreshResp.data?.data?.refreshToken;
         if (newAccessToken) {
           setInMemoryToken(newAccessToken);
-          if (newRefreshToken) {
-            localStorage.setItem("refreshToken", newRefreshToken);
-          }
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           processQueue(null, newAccessToken);
           isRefreshing = false;

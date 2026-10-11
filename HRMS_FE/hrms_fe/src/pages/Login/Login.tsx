@@ -114,7 +114,7 @@ const Login: React.FC = () => {
 
           navigate("/dashboard");
         } else {
-          setErrors({ global: "No access token received from server." });
+          setErrors({ global: "Không nhận được mã xác thực (access token) từ máy chủ." });
         }
       } else {
         setErrors(extractServerErrors(response));
@@ -124,7 +124,7 @@ const Login: React.FC = () => {
         setErrors(extractServerErrors(error.response.data));
       } else {
         setErrors({
-          global: "Cannot connect to server. Please try again later.",
+          global: "Không thể kết nối đến máy chủ. Vui lòng thử lại sau.",
         });
       }
     } finally {
