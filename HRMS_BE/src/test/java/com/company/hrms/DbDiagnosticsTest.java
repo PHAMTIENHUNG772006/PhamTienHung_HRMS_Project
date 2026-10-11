@@ -7,7 +7,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
+
 @SpringBootTest
+@Disabled("Requires live PostgreSQL database on localhost:5433")
 public class DbDiagnosticsTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;

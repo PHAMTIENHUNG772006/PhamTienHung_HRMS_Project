@@ -11,5 +11,5 @@ public interface AccountService {
     UserResponse getAccountById(Long id);
     UserResponse updateAccount(Long id, UpdateUserRequest request);
     void deleteAccount(Long id);
-    void toggleAccountStatus(Long id);
+    String toggleAccountStatus(Long id);
 }

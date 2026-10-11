@@ -11,6 +11,8 @@ import com.company.hrms.module.overtime.service.OvertimeRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,7 +34,7 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public OvertimeResponseDto createOvertimeRequest(OvertimeRequestDto request) {
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new AppException("Nhân viên không tồn tại", HttpStatus.NOT_FOUND));
@@ -48,9 +50,9 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public OvertimeResponseDto updateOvertimeRequestStatus(Long id, String status, Float approvedHours) {
-        OvertimeRequest overtime = overtimeRepository.findById(id)
+        OvertimeRequest overtime = overtimeRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException("Không tìm thấy đơn OT", HttpStatus.NOT_FOUND));
         
         overtime.setStatus(status);

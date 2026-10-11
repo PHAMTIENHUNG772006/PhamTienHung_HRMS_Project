@@ -8,9 +8,14 @@ import com.company.hrms.model.entity.LeaveRequest;
 import com.company.hrms.module.employee.repository.EmployeeRepository;
 import com.company.hrms.module.leave.repository.LeaveRequestRepository;
 import com.company.hrms.module.leave.service.LeaveRequestService;
+import com.company.hrms.security.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,10 +27,22 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     private final LeaveRequestRepository leaveRequestRepository;
     private final EmployeeRepository employeeRepository;
+    private final SecurityService securityService;
 
     @Override
     @Transactional(readOnly = true)
     public List<LeaveResponseDto> getAllLeaveRequests() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // Row-level Security: Nhân viên thông thường chỉ xem được đơn của chính mình
+        if (auth != null && !securityService.isManagerOrAbove(auth)) {
+            Long currentEmpId = securityService.getCurrentEmployeeId(auth);
+            if (currentEmpId != null) {
+                return leaveRequestRepository.findAllByEmployeeEmployeeId(currentEmpId).stream()
+                        .map(this::mapToDto)
+                        .collect(Collectors.toList());
+            }
+        }
+
         return leaveRequestRepository.findAllWithEmployee().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -40,7 +57,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public LeaveResponseDto createLeaveRequest(LeaveRequestDto request) {
         if (request.getEndDate().isBefore(request.getStartDate())) {
             throw new AppException("Ngày kết thúc không được trước ngày bắt đầu", HttpStatus.BAD_REQUEST);
@@ -61,9 +78,9 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public LeaveResponseDto updateLeaveRequest(Long id, LeaveRequestDto request) {
-        LeaveRequest leaveRequest = leaveRequestRepository.findById(id)
+        LeaveRequest leaveRequest = leaveRequestRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException("Không tìm thấy đơn xin nghỉ phép", HttpStatus.NOT_FOUND));
 
         if (!"PENDING".equalsIgnoreCase(leaveRequest.getStatus())) {
@@ -83,18 +100,18 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public LeaveResponseDto updateLeaveRequestStatus(Long id, String status) {
-        LeaveRequest leaveRequest = leaveRequestRepository.findById(id)
+        LeaveRequest leaveRequest = leaveRequestRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException("Không tìm thấy đơn xin nghỉ phép", HttpStatus.NOT_FOUND));
         leaveRequest.setStatus(status);
         return mapToDto(leaveRequestRepository.save(leaveRequest));
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public void deleteLeaveRequest(Long id) {
-        LeaveRequest leaveRequest = leaveRequestRepository.findById(id)
+        LeaveRequest leaveRequest = leaveRequestRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException("Không tìm thấy đơn xin nghỉ phép", HttpStatus.NOT_FOUND));
 
         if (!"PENDING".equalsIgnoreCase(leaveRequest.getStatus())) {

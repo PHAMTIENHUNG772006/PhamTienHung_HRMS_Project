@@ -25,7 +25,7 @@ public class AccountController {
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllAccounts() {
         return ResponseEntity.ok(ApiResponse.<List<UserResponse>>builder()
                 .success(true)
-                .message("Accounts fetched successfully")
+                .message("Lấy danh sách tài khoản thành công")
                 .data(accountService.getAllAccounts())
                 .build());
     }
@@ -43,7 +43,7 @@ public class AccountController {
     public ResponseEntity<ApiResponse<UserResponse>> getAccountById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
                 .success(true)
-                .message("Account fetched successfully")
+                .message("Lấy thông tin tài khoản thành công")
                 .data(accountService.getAccountById(id))
                 .build());
     }
@@ -52,7 +52,7 @@ public class AccountController {
     public ResponseEntity<ApiResponse<UserResponse>> updateAccount(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
         return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
                 .success(true)
-                .message("Account updated successfully")
+                .message("Cập nhật tài khoản thành công")
                 .data(accountService.updateAccount(id, request))
                 .build());
     }
@@ -62,16 +62,16 @@ public class AccountController {
         accountService.deleteAccount(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .success(true)
-                .message("Account deleted successfully")
+                .message("Xóa tài khoản thành công")
                 .build());
     }
 
     @PatchMapping("/{id}/toggle-status")
     public ResponseEntity<ApiResponse<Void>> toggleStatus(@PathVariable Long id) {
-        accountService.toggleAccountStatus(id);
+        String msg = accountService.toggleAccountStatus(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .success(true)
-                .message("Account status toggled successfully")
+                .message(msg)
                 .build());
     }
 }

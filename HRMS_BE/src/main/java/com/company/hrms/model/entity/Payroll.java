@@ -11,7 +11,9 @@ import java.math.BigDecimal;
  * Liên quan: Module Tính lương (F11).
  */
 @Entity
-@Table(name = "payrolls")
+@Table(name = "payrolls", uniqueConstraints = {
+    @UniqueConstraint(name = "uk_payroll_emp_period", columnNames = {"employee_id", "salary_period"})
+})
 @Getter
 @Setter
 public class Payroll extends BaseEntity {

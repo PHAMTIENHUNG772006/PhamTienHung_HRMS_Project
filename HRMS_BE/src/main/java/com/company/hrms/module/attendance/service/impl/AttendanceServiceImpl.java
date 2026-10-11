@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,7 +43,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private static final String ATTENDANCE_IMAGE_FOLDER = "hrms/attendances";
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public AttendanceResponseDto checkIn(Authentication authentication, MultipartFile image, String shiftCode) {
         Employee employee = getEmployeeFromAuthentication(authentication);
         Long employeeId = employee.getEmployeeId();
@@ -91,7 +93,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public AttendanceResponseDto checkOut(Authentication authentication, MultipartFile image, String shiftCode) {
         Employee employee = getEmployeeFromAuthentication(authentication);
         Long employeeId = employee.getEmployeeId();
@@ -101,8 +103,8 @@ public class AttendanceServiceImpl implements AttendanceService {
             throw new AppException("Vui lòng chọn ca làm việc để check-out", HttpStatus.BAD_REQUEST);
         }
 
-        // Validate 1: Kiểm tra xem nhân viên đã CHECK-IN ca này hôm nay chưa
-        Attendance attendance = attendanceRepository.findByEmployeeEmployeeIdAndWorkDateAndShiftShiftCode(employeeId, today, shiftCode)
+        // Validate 1: Kiểm tra xem nhân viên đã CHECK-IN ca này hôm nay chưa (khóa PESSIMISTIC_WRITE để tránh cập nhật đè đồng thời)
+        Attendance attendance = attendanceRepository.findForUpdateByEmployeeAndDateAndShift(employeeId, today, shiftCode)
                 .orElseThrow(() -> new AppException("Lỗi: Bạn CHƯA check-in ca '" + shiftCode + "' ngày hôm nay. Không thể check-out.", HttpStatus.BAD_REQUEST));
 
         // Validate 2: Kiểm tra xem đã check-out chưa

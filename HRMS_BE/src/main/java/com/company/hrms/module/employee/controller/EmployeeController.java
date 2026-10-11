@@ -31,7 +31,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE')")
+    @PreAuthorize("@securityService.canAccessEmployee(#id, authentication)")
     public ResponseEntity<ApiResponse<EmployeeResponse>> getEmployeeById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.<EmployeeResponse>builder()
                 .success(true)

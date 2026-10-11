@@ -32,7 +32,7 @@ public class LeaveRequestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
+    @PreAuthorize("@securityService.canCreateLeaveRequest(#request.employeeId, authentication)")
     public ResponseEntity<ApiResponse<LeaveResponseDto>> createLeaveRequest(@Valid @RequestBody LeaveRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<LeaveResponseDto>builder()
                 .success(true)
@@ -42,7 +42,7 @@ public class LeaveRequestController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
+    @PreAuthorize("@securityService.canModifyLeaveRequest(#id, authentication)")
     public ResponseEntity<ApiResponse<LeaveResponseDto>> updateLeaveRequest(@PathVariable Long id, @Valid @RequestBody LeaveRequestDto request) {
         return ResponseEntity.ok(ApiResponse.<LeaveResponseDto>builder()
                 .success(true)
@@ -63,7 +63,7 @@ public class LeaveRequestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE')")
+    @PreAuthorize("@securityService.canModifyLeaveRequest(#id, authentication)")
     public ResponseEntity<ApiResponse<Void>> deleteLeaveRequest(@PathVariable Long id) {
         leaveRequestService.deleteLeaveRequest(id);
         return ResponseEntity.ok(ApiResponse.<Void>builder()

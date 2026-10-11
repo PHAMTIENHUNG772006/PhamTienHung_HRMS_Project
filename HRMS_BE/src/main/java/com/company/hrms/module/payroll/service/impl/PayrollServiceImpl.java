@@ -10,6 +10,8 @@ import com.company.hrms.module.payroll.service.PayrollService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.company.hrms.model.entity.ShiftAssignment;
@@ -48,7 +50,7 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public List<PayrollResponseDto> calculatePayroll(String period) {
         if (period == null || !period.matches("\\d{4}-\\d{2}")) {
             throw new AppException("Kỳ lương không hợp lệ, yêu cầu định dạng YYYY-MM", HttpStatus.BAD_REQUEST);
@@ -184,7 +186,7 @@ public class PayrollServiceImpl implements PayrollService {
             BigDecimal netSalary = baseEarned.add(allowance).add(overtimePay).subtract(deductions);
 
             Optional<Payroll> existingOpt = payrollRepository
-                    .findByEmployeeEmployeeIdAndSalaryPeriod(employee.getEmployeeId(), period);
+                    .findForUpdateByEmployeeAndPeriod(employee.getEmployeeId(), period);
 
             Payroll payroll;
             if (existingOpt.isPresent()) {
@@ -211,9 +213,9 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public PayrollResponseDto updatePayrollStatus(Long id, String status) {
-        Payroll payroll = payrollRepository.findById(id)
+        Payroll payroll = payrollRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new AppException("Không tìm thấy bảng lương", HttpStatus.NOT_FOUND));
         payroll.setStatus(status);
         return mapToDto(payrollRepository.save(payroll));

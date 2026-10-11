@@ -47,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(readOnly = true)
     public UserResponse getAccountById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Không tìm thấy tài khoản người dùng", HttpStatus.NOT_FOUND));
         return mapToUserResponse(user);
     }
 
@@ -55,7 +55,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public UserResponse updateAccount(Long id, UpdateUserRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Không tìm thấy tài khoản người dùng", HttpStatus.NOT_FOUND));
 
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
@@ -66,7 +66,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (request.getRoleName() != null) {
             Role role = roleRepository.findByRoleName(request.getRoleName())
-                    .orElseThrow(() -> new AppException("Role not found", HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new AppException("Không tìm thấy vai trò người dùng", HttpStatus.NOT_FOUND));
             user.setRole(role);
         }
 
@@ -77,24 +77,32 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void deleteAccount(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new AppException("User not found", HttpStatus.NOT_FOUND);
+            throw new AppException("Không tìm thấy tài khoản người dùng", HttpStatus.NOT_FOUND);
         }
         userRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public void toggleAccountStatus(Long id) {
+    public String toggleAccountStatus(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Không tìm thấy tài khoản người dùng", HttpStatus.NOT_FOUND));
+
+        if ("ADMIN".equals(user.getRole().getRoleName())) {
+            throw new AppException("Không thể thay đổi trạng thái của tài khoản ADMIN", HttpStatus.FORBIDDEN);
+        }
         
+        String message;
         if ("ACTIVE".equals(user.getStatus())) {
             user.setStatus("INACTIVE");
+            message = "Đã khóa tài khoản thành công";
         } else {
             user.setStatus("ACTIVE");
+            message = "Đã kích hoạt tài khoản thành công";
         }
         
         userRepository.save(user);
+        return message;
     }
 
     private UserResponse mapToUserResponse(User user) {
