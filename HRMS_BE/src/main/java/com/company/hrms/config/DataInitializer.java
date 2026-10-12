@@ -22,14 +22,11 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // 1. Tạo các Role mặc định nếu chưa có
-        // Lưu ý: Đã loại bỏ role RECRUITER theo yêu cầu mới
         createRoleIfNotFound("ADMIN");
         createRoleIfNotFound("HR");
         createRoleIfNotFound("MANAGER");
         createRoleIfNotFound("PAYROLL");
         createRoleIfNotFound("EMPLOYEE");
-        
-        // Giữ lại CANDIDATE cho luồng đăng ký ứng viên bên ngoài (nếu có)
         createRoleIfNotFound("CANDIDATE");
 
         // 2. Tạo tài khoản Admin mặc định

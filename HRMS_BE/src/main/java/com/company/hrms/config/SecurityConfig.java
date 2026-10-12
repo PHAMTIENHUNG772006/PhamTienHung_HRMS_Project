@@ -81,7 +81,7 @@ public class SecurityConfig {
                 // F09: Tính toán lương
                 .requestMatchers("/api/v1/payroll/**").hasAnyRole("ADMIN", "PAYROLL")
                 
-                // F10: Quản lý Chiến dịch tuyển dụng (Đã cập nhật: ADMIN và HR)
+                // F10: Quản lý Chiến dịch tuyển dụng
                 .requestMatchers("/api/v1/recruitment/**").hasAnyRole("ADMIN", "HR")
                 
                 // F11: Cấp phát & Thu hồi Tài sản
