@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 260" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="fullLogoGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#78cc7e" />
+      <stop offset="50%" stop-color="#2eb39d" />
+      <stop offset="100%" stop-color="#149eb2" />
+    </linearGradient>
+    <mask id="fullLogoMask">
+      <rect x="0" y="0" width="600" height="600" fill="#ffffff" />
+      <circle cx="300" cy="300" r="75" fill="#000000" />
+      <g fill="#000000" stroke="#000000" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" color="#000000">
+        
+      <path d="M 205 425 C 230 360, 285 270, 370 185 C 400 150, 430 115, 450 80" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" />
+      <path d="M 225.0,385.0 C 228.1,344.0 199.8,328.5 168.0,338.0 C 168.5,366.5 190.0,390.3 225.0,385.0 Z" fill="currentColor" />
+      <path d="M 260.0,330.0 C 269.8,277.6 234.9,248.0 192.0,250.0 C 189.9,286.3 214.9,324.2 260.0,330.0 Z" fill="currentColor" />
+      <path d="M 305.0,270.0 C 319.2,221.0 288.9,188.4 248.0,185.0 C 242.6,219.4 262.8,258.9 305.0,270.0 Z" fill="currentColor" />
+      <path d="M 355.0,210.0 C 370.2,170.4 348.0,138.5 315.0,130.0 C 306.9,159.0 320.2,195.4 355.0,210.0 Z" fill="currentColor" />
+      <path d="M 310.0,275.0 C 350.4,290.9 389.4,271.0 405.0,240.0 C 370.2,218.7 326.9,227.1 310.0,275.0 Z" fill="currentColor" />
+      <path d="M 360.0,215.0 C 401.3,223.6 440.2,200.1 455.0,170.0 C 419.1,155.7 375.6,169.4 360.0,215.0 Z" fill="currentColor" />
+      <path d="M 405.0,155.0 C 440.6,164.1 475.6,145.4 490.0,120.0 C 460.0,107.5 421.5,117.9 405.0,155.0 Z" fill="currentColor" />
+      <path d="M 445.0,85.0 C 469.1,82.3 477.0,63.3 470.0,45.0 C 449.1,45.9 435.2,61.1 445.0,85.0 Z" fill="currentColor" />
+
+      </g>
+    </mask>
+  </defs>
+
+  <!-- Left Emblem scaled to 240px -->
+  <g transform="translate(10, 10) scale(0.4) translate(0, 0)">
+    <path d="M 215.1 147.0 L 206.5 112.0 L 233.1 100.9 L 251.8 131.8 L 348.2 131.8 L 366.9 100.9 L 393.5 112.0 L 384.9 147.0 L 453.0 215.1 L 488.0 206.5 L 499.1 233.1 L 468.2 251.8 L 468.2 348.2 L 499.1 366.9 L 488.0 393.5 L 453.0 384.9 L 384.9 453.0 L 393.5 488.0 L 366.9 499.1 L 348.2 468.2 L 251.8 468.2 L 233.1 499.1 L 206.5 488.0 L 215.1 453.0 L 147.0 384.9 L 112.0 393.5 L 100.9 366.9 L 131.8 348.2 L 131.8 251.8 L 100.9 233.1 L 112.0 206.5 L 147.0 215.1 Z" fill="url(#fullLogoGrad)" mask="url(#fullLogoMask)" />
+    <g fill="url(#fullLogoGrad)" stroke="url(#fullLogoGrad)" color="url(#fullLogoGrad)">
+      
+      <path d="M 205 425 C 230 360, 285 270, 370 185 C 400 150, 430 115, 450 80" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" />
+      <path d="M 225.0,385.0 C 228.1,344.0 199.8,328.5 168.0,338.0 C 168.5,366.5 190.0,390.3 225.0,385.0 Z" fill="currentColor" />
+      <path d="M 260.0,330.0 C 269.8,277.6 234.9,248.0 192.0,250.0 C 189.9,286.3 214.9,324.2 260.0,330.0 Z" fill="currentColor" />
+      <path d="M 305.0,270.0 C 319.2,221.0 288.9,188.4 248.0,185.0 C 242.6,219.4 262.8,258.9 305.0,270.0 Z" fill="currentColor" />
+      <path d="M 355.0,210.0 C 370.2,170.4 348.0,138.5 315.0,130.0 C 306.9,159.0 320.2,195.4 355.0,210.0 Z" fill="currentColor" />
+      <path d="M 310.0,275.0 C 350.4,290.9 389.4,271.0 405.0,240.0 C 370.2,218.7 326.9,227.1 310.0,275.0 Z" fill="currentColor" />
+      <path d="M 360.0,215.0 C 401.3,223.6 440.2,200.1 455.0,170.0 C 419.1,155.7 375.6,169.4 360.0,215.0 Z" fill="currentColor" />
+      <path d="M 405.0,155.0 C 440.6,164.1 475.6,145.4 490.0,120.0 C 460.0,107.5 421.5,117.9 405.0,155.0 Z" fill="currentColor" />
+      <path d="M 445.0,85.0 C 469.1,82.3 477.0,63.3 470.0,45.0 C 449.1,45.9 435.2,61.1 445.0,85.0 Z" fill="currentColor" />
+
+    </g>
+  </g>
+
+  <!-- Typography -->
+  <g transform="translate(270, 0)">
+    <text x="0" y="125" font-family="'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="96" font-weight="800" fill="#144b66" letter-spacing="0.04em">HRMS</text>
+    <text x="4" y="178" font-family="'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="600" fill="#1b5a7b" letter-spacing="0.015em">Human Resources Management System</text>
+  </g>
+</svg>

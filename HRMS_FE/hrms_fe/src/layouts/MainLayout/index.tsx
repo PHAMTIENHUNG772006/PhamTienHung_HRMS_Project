@@ -1,6 +1,7 @@
 import React from "react";
-import { Outlet, NavLink, useLocation } from "react-router-dom";
+import { Outlet, NavLink, Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { Logo } from "../../components/common/Logo";
 import Swal from "sweetalert2";
 
 interface NavItem {
@@ -193,14 +194,15 @@ const MainLayout: React.FC = () => {
       <aside className="sidebar">
         {/* Brand layout */}
         <div className="brand">
-          <div className="brand-logo-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5"></path>
-              <path d="M2 12l10 5 10-5"></path>
-            </svg>
-            <h2 className="brand-title">HRMS PORTAL</h2>
-          </div>
+          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+            <div className="brand-logo-wrap">
+              <Logo variant="icon" size={38} />
+              <div className="brand-text-col">
+                <h2 className="brand-title">HRMS PORTAL</h2>
+                <p className="brand-subtitle">Management System</p>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Sidebar Search input */}

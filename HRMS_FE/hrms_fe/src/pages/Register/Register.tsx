@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { registerUser } from "../../api/endpoints/auth.api";
+import { Logo } from "../../components/common/Logo";
 import "./Register.css";
 
 const Register: React.FC = () => {
@@ -138,20 +139,8 @@ const Register: React.FC = () => {
   return (
     <div className="register-card">
       <div className="register-header">
-        <div className="register-logo-icon">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-          </svg>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+          <Logo variant="vertical" size={72} showSubtitle={false} />
         </div>
         <h2>Đăng ký tài khoản</h2>
         <p>Tạo tài khoản ứng viên để tham gia ứng tuyển và theo dõi kết quả</p>

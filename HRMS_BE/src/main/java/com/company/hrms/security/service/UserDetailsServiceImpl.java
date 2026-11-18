@@ -23,9 +23,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng với email: " + email));
-
-        // Thay vì trả về UserDetails của Spring, trả về chính entity User của mình
-        // Điều này giúp loại bỏ ClassCastException và làm cho logic nhất quán
         return user;
     }
 }

@@ -44,33 +44,36 @@ html, body, #root {
 }
 
 .brand {
-  padding: 0 8px 8px;
+  padding: 0 8px 12px;
   border-bottom: 1px solid var(--border);
 }
 
 .brand-logo-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.brand-logo-wrap svg {
-  color: var(--brand);
+.brand-text-col {
+  display: flex;
+  flex-direction: column;
 }
 
 .brand h2.brand-title {
   margin: 0;
-  font-size: 18px;
+  font-size: 16.5px;
   font-weight: 800;
-  color: var(--brand-dark);
-  letter-spacing: 0.05em;
+  color: #144b66;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
 }
 
 .brand p.brand-subtitle {
-  margin: 4px 0 0;
-  color: var(--text-tertiary);
-  font-size: 12px;
-  font-weight: 500;
+  margin: 2px 0 0;
+  color: #1b5a7b;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 /* Sidebar Search Box */

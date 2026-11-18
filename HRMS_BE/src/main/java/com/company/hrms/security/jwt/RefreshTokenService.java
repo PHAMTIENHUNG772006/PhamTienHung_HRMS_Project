@@ -64,19 +64,18 @@ public class RefreshTokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
 
-        // XÓA BẰNG CÂU LỆNH MODIFING THAY VÌ TÌM RỒI XÓA ĐỂ TRÁNH LỖI ĐỒNG BỘ
         Optional<RefreshToken> oldTokenOpt = refreshTokenRepository.findByUserUserId(userId);
         if (oldTokenOpt.isPresent()) {
             try {
                 redisTemplate.delete(getRedisKey(oldTokenOpt.get().getToken()));
             } catch (Exception e) {
-                // Ignore Redis delete failure
+                // Ignore Redis deletion failure
             }
         }
         
-        // Gọi thẳng hàm deleteByUser có sẵn để ép Hibernate xóa sạch trước khi thêm
+
         refreshTokenRepository.deleteByUser(user);
-        refreshTokenRepository.flush(); // Bắt buộc đẩy query DELETE xuống DB ngay lập tức
+        refreshTokenRepository.flush();
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
@@ -84,10 +83,8 @@ public class RefreshTokenService {
                 .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
                 .build();
 
-        // Lưu vào DB trước
         RefreshToken savedToken = refreshTokenRepository.save(refreshToken);
-        
-        // Sau đó cache vào Redis
+
         try {
             redisTemplate.opsForValue().set(getRedisKey(savedToken.getToken()), savedToken, Duration.ofMillis(refreshTokenDurationMs));
         } catch (Exception e) {
@@ -100,7 +97,11 @@ public class RefreshTokenService {
     @Transactional
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
-            // Xóa khỏi Redis và DB
+            try {
+                redisTemplate.delete(getRedisKey(token.getToken()));
+            } catch (Exception e) {
+                // Ignore Redis deletion failure
+            }
             try {
                 redisTemplate.delete(getRedisKey(token.getToken()));
             } catch (Exception e) {
@@ -121,7 +122,6 @@ public class RefreshTokenService {
         verifyExpiration(oldToken);
         User user = oldToken.getUser();
 
-        // Xóa token cũ khỏi Redis và DB
         try {
             redisTemplate.delete(getRedisKey(oldToken.getToken()));
         } catch (Exception e) {
